@@ -1,0 +1,14 @@
+[package]
+name = "whi_hdi_extensions"
+version = "0.1.0"
+authors = ["Matthew Brisebois <matthew.brisebois@holo.host>"]
+edition = "2018"
+
+[lib]
+name = "hdi_extensions"
+
+[dependencies]
+hdi = "0.4.0-beta-dev.1"
+holo_hash = { version = "0.3.0-beta-dev.1", features = [ "encoding" ] }
+serde = "1"
+# thiserror = "1"

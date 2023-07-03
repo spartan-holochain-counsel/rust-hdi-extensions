@@ -1,0 +1,15 @@
+manifest_version: "1"
+name: model_dna
+integrity:
+  origin_time: 2023-01-01T00:00:00.000000Z
+  network-seed: ~
+  properties: ~
+  zomes:
+    - name: basic_usage
+      bundled: ../zomes/basic_usage.wasm
+coordinator:
+  zomes:
+    - name: basic_usage_csr
+      bundled: ../zomes/basic_usage_csr.wasm
+      dependencies:
+        - name: basic_usage

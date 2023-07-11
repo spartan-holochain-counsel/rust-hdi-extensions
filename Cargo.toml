@@ -3,6 +3,10 @@ name = "whi_hdi_extensions"
 version = "0.1.0"
 authors = ["Matthew Brisebois <matthew@webheroes.ca>"]
 edition = "2018"
+license = "CAL-1.0"
+repository = "https://github.com/mjbrisebois/rust-hdi-extensions"
+description = "Code that works in tandem or is complimentary to the Holochain `hdi` crate"
+readme = "README.md"
 
 [lib]
 name = "hdi_extensions"
@@ -11,4 +15,3 @@ name = "hdi_extensions"
 hdi = "0.4.0-beta-dev.1"
 holo_hash = { version = "0.3.0-beta-dev.1", features = [ "encoding" ] }
 serde = "1"
-# thiserror = "1"

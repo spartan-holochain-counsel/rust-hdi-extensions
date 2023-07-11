@@ -1,3 +1,4 @@
+[![](https://img.shields.io/crates/v/whi_hdi_extensions?style=flat-square)](https://crates.io/crates/whi_hdi_extensions)
 
 # HDI Extensions
 Code that works in tandem or is complimentary to the [`hdi`](https://docs.rs/hdi) crate.

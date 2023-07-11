@@ -18,21 +18,10 @@ use hdi::prelude::holo_hash::AnyLinkableHashPrimitive;
 
 
 //
-// Custom Error Handling
+// Error Handling
 //
-#[derive(Debug)]
-pub enum HdiExtError<'a> {
-    ExpectedRecordNotEntry(&'a ActionHash),
-}
-
-impl<'a> From<HdiExtError<'a>> for WasmError {
-    fn from(error: HdiExtError) -> Self {
-        guest_error!(format!("{:?}", error ))
-    }
-}
-
 /// Replace [`SerializedBytesError::Deserialize`] in [`WasmErrorInner::Serialize`] with [`WasmErrorInner::Guest`]
-pub fn convert_deserialize_error(error: WasmError) -> WasmError {
+fn convert_deserialize_error(error: WasmError) -> WasmError {
     match error {
         WasmError { error: WasmErrorInner::Serialize(SerializedBytesError::Deserialize(msg)), .. } =>
             guest_error!(
@@ -267,7 +256,7 @@ impl AnyDhtHashTransformer for AnyDhtHash {
 //
 // Advanced "get" Methods
 //
-/// Resolve the entry for a given hash
+/// Resolve the given address into the expected app entry struct
 ///
 /// ##### Example: Basic Usage
 /// ```
@@ -280,11 +269,11 @@ impl AnyDhtHashTransformer for AnyDhtHash {
 /// # }
 ///
 /// fn test(any_linkable_hash: AnyLinkableHash) -> ExternResult<()> {
-///     let post : PostEntry = must_get_any_linkable_entry( &any_linkable_hash )?;
+///     let post : PostEntry = must_get_app_entry( &any_linkable_hash )?;
 ///     Ok(())
 /// }
 /// ```
-pub fn must_get_any_linkable_entry<T,E>(addr: &AnyLinkableHash) -> ExternResult<T>
+pub fn must_get_app_entry<T,E>(addr: &AnyLinkableHash) -> ExternResult<T>
 where
     T: TryFrom<Record, Error = E> + TryFrom<Entry, Error = E>,
     E: std::fmt::Debug,
@@ -305,7 +294,10 @@ where
     }
 }
 
-/// Check that the given hash can deserialize to the entry struct
+/// Check that the given address can deserialize to the expected app entry struct
+///
+/// **NOTE:** *This will only verify the deserialization of an app entry, it does not validate the
+/// app entry def*
 ///
 /// ##### Example: Basic Usage
 /// ```
@@ -318,15 +310,15 @@ where
 /// # }
 ///
 /// fn test(any_linkable_hash: AnyLinkableHash) -> ExternResult<()> {
-///     any_linkable_deserialize_check::<PostEntry>( &any_linkable_hash )?;
+///     verify_app_entry_struct::<PostEntry>( &any_linkable_hash )?;
 ///     Ok(())
 /// }
 /// ```
-pub fn any_linkable_deserialize_check<T>(addr: &AnyLinkableHash) -> ExternResult<()>
+pub fn verify_app_entry_struct<T>(addr: &AnyLinkableHash) -> ExternResult<()>
 where
     T: TryFrom<Record, Error = WasmError> + TryFrom<Entry, Error = WasmError>,
 {
-    let _ : T = must_get_any_linkable_entry( addr )?;
+    let _ : T = must_get_app_entry( addr )?;
 
     Ok(())
 }
@@ -381,63 +373,66 @@ pub fn get_creation_action(action_addr: &ActionHash) -> ExternResult<EntryCreati
     }
 }
 
-/// Resolve the app entry from a given action
-///
-/// ##### Example: Basic Usage
-/// ```ignore
-/// use hdi::prelude::*;
-/// use hdi_extensions::*;
-///
-/// #[hdk_entry_helper]
-/// struct PostEntry {
-///     pub message: String,
-/// }
-///
-/// #[hdk_entry_defs]
-/// #[unit_enum(EntryTypesUnit)]
-/// pub enum EntryTypes {
-///     #[entry_def]
-///     Post(PostEntry),
-/// }
-///
-/// scoped_type_connector!(
-///     EntryTypesUnit::Post,
-///     EntryTypes::Post( PostEntry )
-/// );
-///
-/// let post = PostEntry {
-///     message: "Hello world".to_string(),
-/// };
-/// let action_hash = create_entry( post.to_input() )?;
-/// let action = must_get_action( action_hash )?;
-///
-/// let app_entry : PostEntry = get_app_entry(action)?;
-/// ```
-pub fn get_app_entry<ET,A>(action: &A) -> ExternResult<ET>
-where
-    ET: EntryTypesHelper,
-    WasmError: From<<ET as EntryTypesHelper>::Error>,
-    A: Into<EntryCreationAction> + Clone,
-{
-    let action : EntryCreationAction = action.to_owned().into();
-    let entry_def = derive_app_entry_def( &action )?;
-    let entry = must_get_entry( action.entry_hash().to_owned() )?.content;
+/// Extend [`Action`] transformations
+pub trait ActionTransformer : Sized {
+    /// Get the app entry that this action points to
+    ///
+    /// ##### Example: Basic Usage
+    /// ```ignore
+    /// use hdi::prelude::*;
+    /// use hdi_extensions::*;
+    ///
+    /// #[hdk_entry_helper]
+    /// struct PostEntry {
+    ///     pub message: String,
+    /// }
+    ///
+    /// #[hdk_entry_defs]
+    /// #[unit_enum(EntryTypesUnit)]
+    /// pub enum EntryTypes {
+    ///     #[entry_def]
+    ///     Post(PostEntry),
+    /// }
+    ///
+    /// fn test(addr: ActionHash) -> ExternResult<()> {
+    ///     let action = must_get_action( addr )?.hashed.content;
+    ///     let entry_type = action.get_app_entry<EntryTypes>()?;
+    ///     Ok(())
+    /// }
+    /// ```
+    fn get_app_entry<ET>(&self) -> ExternResult<ET>
+    where
+        ET: EntryTypesHelper,
+        WasmError: From<<ET as EntryTypesHelper>::Error>;
+}
 
-    ET::deserialize_from_type(
-        entry_def.zome_index.clone(),
-        entry_def.entry_index.clone(),
-        &entry,
-    )?.ok_or(guest_error!(
-        format!("No match for entry def ({:?}) in expected entry types", entry_def )
-    ))
+impl ActionTransformer for Action {
+    fn get_app_entry<ET>(&self) -> ExternResult<ET>
+    where
+        ET: EntryTypesHelper,
+        WasmError: From<<ET as EntryTypesHelper>::Error>,
+    {
+        let action = EntryCreationAction::try_from( self.to_owned() )
+            .map_err(|err| guest_error!(err.0))?;
+        let entry_def = detect_app_entry_def( &action )?;
+        let entry = must_get_entry( action.entry_hash().to_owned() )?.content;
+
+        ET::deserialize_from_type(
+            entry_def.zome_index.clone(),
+            entry_def.entry_index.clone(),
+            &entry,
+        )?.ok_or(guest_error!(
+            format!("No match for entry def ({:?}) in expected entry types", entry_def )
+        ))
+    }
 }
 
 
 //
 // EntryTypesHelper extensions
 //
-/// Derive the [`AppEntryDef`] from a given [`Action`]
-pub fn derive_app_entry_def<A>(action: &A) -> ExternResult<AppEntryDef>
+/// Detect the [`AppEntryDef`] from a given [`Action`]
+pub fn detect_app_entry_def<A>(action: &A) -> ExternResult<AppEntryDef>
 where
     A: Into<EntryCreationAction> + Clone,
 {
@@ -450,14 +445,14 @@ where
     }
 }
 
-/// Derive the entry types unit from a given [`Action`]
-pub fn derive_app_entry_unit<ETU,A>(action: &A) -> ExternResult<ETU>
+/// Detect the entry types unit from a given [`Action`]
+pub fn detect_app_entry_unit<ETU,A>(action: &A) -> ExternResult<ETU>
 where
     ETU: TryFrom<ScopedEntryDefIndex, Error = WasmError>,
     A: Into<EntryCreationAction> + Clone,
 {
     let action : EntryCreationAction = action.to_owned().into();
-    let entry_def = derive_app_entry_def( &action )?;
+    let entry_def = detect_app_entry_def( &action )?;
     ETU::try_from(ScopedEntryDefIndex {
         zome_index: entry_def.zome_index,
         zome_type: entry_def.entry_index,

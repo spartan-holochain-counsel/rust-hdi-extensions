@@ -42,7 +42,7 @@ use-npm-into-struct:
 # Packages
 #
 preview-crate:			test-debug
-	cargo publish --dry-run
+	cargo publish --dry-run --allow-dirty
 publish-crate:			test-debug
 	CARGO_HOME=$(HOME)/.cargo cargo publish
 
@@ -103,9 +103,9 @@ update-hdi-version:
 #
 MAIN_DOCS		= target/doc/hdi_extensions/index.html
 test-docs:
-	cd zomes; cargo test --doc
+	cargo test --doc
 $(MAIN_DOCS):		test-docs
-	cd zomes; cargo doc
+	cargo doc
 	@echo -e "\x1b[37mOpen docs in file://$(shell pwd)/$(MAIN_DOCS)\x1b[0m";
 docs:			$(MAIN_DOCS)
 docs-watch:

@@ -2,11 +2,14 @@ mod macros;
 
 use core::convert::{ TryFrom, TryInto };
 use hdi::prelude::{
-    must_get_valid_record, must_get_entry,
+    must_get_action,
+    must_get_entry,
+    must_get_valid_record,
     ExternResult, WasmError, WasmErrorInner,
     Deserialize, Serialize, SerializedBytesError,
     ActionHash, EntryHash, ExternalHash, AnyDhtHash, AnyLinkableHash,
     Record, Action, Entry, EntryCreationAction, ActionType,
+    SignedActionHashed, EntryHashed,
     AppEntryDef, ScopedEntryDefIndex,
     EntryType, EntryTypesHelper,
     // Action Types
@@ -15,6 +18,27 @@ use hdi::prelude::{
     Create, Update, Delete,
 };
 use hdi::prelude::holo_hash::AnyLinkableHashPrimitive;
+
+
+// Prefix association train alternatives for 'must_'
+// - sure, precise, exact, rigid, strict, pure, hard, assured, ensured, secure, guaranteed
+//
+// In the end, 'pure_get' or any other prefixes for 'get' seemed to long.  'summon' implies that the
+// thing is not present but it exists somewhere else.
+/// Alias for [`must_get_valid_record`]
+pub fn summon_valid_record(action_hash: ActionHash) -> ExternResult<Record> {
+    must_get_valid_record(action_hash)
+}
+
+/// Alias for [`must_get_action`]
+pub fn summon_action(action_hash: ActionHash) -> ExternResult<SignedActionHashed> {
+    must_get_action(action_hash)
+}
+
+/// Alias for [`must_get_entry`]
+pub fn summon_entry(entry_hash: EntryHash) -> ExternResult<EntryHashed> {
+    must_get_entry(entry_hash)
+}
 
 
 //
@@ -41,7 +65,7 @@ pub fn trace_origin(action_address: &ActionHash) -> ExternResult<Vec<(ActionHash
     let mut next_addr = Some(action_address.to_owned());
 
     while let Some(addr) = next_addr {
-        let record = must_get_valid_record( addr )?;
+        let record = summon_valid_record( addr )?;
 
         next_addr = match record.action() {
             Action::Update(update) => Some(update.original_action_address.to_owned()),
@@ -59,7 +83,7 @@ pub fn trace_origin(action_address: &ActionHash) -> ExternResult<Vec<(ActionHash
 /// Get the last item in a [`trace_origin`] result
 ///
 /// This should always be a [`Create`] action.
-pub fn trace_root_origin(action_address: &ActionHash) -> ExternResult<(ActionHash, Action)> {
+pub fn trace_origin_root(action_address: &ActionHash) -> ExternResult<(ActionHash, Action)> {
     Ok( trace_origin( action_address )?.last().unwrap().to_owned() )
 }
 
@@ -256,7 +280,10 @@ impl AnyDhtHashTransformer for AnyDhtHash {
 //
 // Advanced "get" Methods
 //
-/// Resolve the given address into the expected app entry struct
+/// Get and deserialize the given address into the expected app entry struct
+///
+/// **NOTE:** *This will only verify the deserialization of an app entry, it does not validate the
+/// app entry def*
 ///
 /// ##### Example: Basic Usage
 /// ```
@@ -269,11 +296,11 @@ impl AnyDhtHashTransformer for AnyDhtHash {
 /// # }
 ///
 /// fn test(any_linkable_hash: AnyLinkableHash) -> ExternResult<()> {
-///     let post : PostEntry = must_get_app_entry( &any_linkable_hash )?;
+///     let post : PostEntry = summon_app_entry( &any_linkable_hash )?;
 ///     Ok(())
 /// }
 /// ```
-pub fn must_get_app_entry<T,E>(addr: &AnyLinkableHash) -> ExternResult<T>
+pub fn summon_app_entry<T,E>(addr: &AnyLinkableHash) -> ExternResult<T>
 where
     T: TryFrom<Record, Error = E> + TryFrom<Entry, Error = E>,
     E: std::fmt::Debug,
@@ -281,11 +308,11 @@ where
 {
     match addr.to_owned().into_primitive() {
         AnyLinkableHashPrimitive::Action(action_hash) => Ok(
-            must_get_valid_record( action_hash )?.try_into()
+            summon_valid_record( action_hash )?.try_into()
                 .map_err(|error| convert_deserialize_error( WasmError::from(error) ) )?
         ),
         AnyLinkableHashPrimitive::Entry(entry_hash) => Ok(
-            must_get_entry( entry_hash )?.content.try_into()
+            summon_entry( entry_hash )?.content.try_into()
                 .map_err(|error| convert_deserialize_error( WasmError::from(error) ) )?
         ),
         AnyLinkableHashPrimitive::External(external_hash) => Err(guest_error!(
@@ -318,17 +345,17 @@ pub fn verify_app_entry_struct<T>(addr: &AnyLinkableHash) -> ExternResult<()>
 where
     T: TryFrom<Record, Error = WasmError> + TryFrom<Entry, Error = WasmError>,
 {
-    let _ : T = must_get_app_entry( addr )?;
+    let _ : T = summon_app_entry( addr )?;
 
     Ok(())
 }
 
 /// Get a [`Record`] expecting it to have a specific [`ActionType`]
-pub fn get_record_type(
+pub fn summon_record_type(
     action_addr: &ActionHash,
     action_type: &ActionType
 ) -> ExternResult<Record> {
-    let record = must_get_valid_record( action_addr.to_owned() )?;
+    let record = summon_valid_record( action_addr.to_owned() )?;
 
     if record.action().action_type() != *action_type {
         Err(guest_error!(format!("Action address ({}) is not a {} record", action_addr, action_type )))?
@@ -343,7 +370,7 @@ macro_rules! get_action_type {
         pub fn $fn_name(
             action_addr: &ActionHash,
         ) -> ExternResult<$action_type> {
-            match get_record_type( action_addr, &ActionType::$action_type )?.signed_action.hashed.content {
+            match summon_record_type( action_addr, &ActionType::$action_type )?.signed_action.hashed.content {
                 Action::$action_type( action_inner ) => Ok( action_inner ),
                 _ => Err(guest_error!("This should be unreachable".to_string())),
             }
@@ -351,21 +378,21 @@ macro_rules! get_action_type {
     };
 }
 
-get_action_type!( Dna, get_dna_action );
-get_action_type!( AgentValidationPkg, get_agent_validation_pkg_action );
-get_action_type!( InitZomesComplete, get_init_zomes_complete_action );
-get_action_type!( CreateLink, get_create_link_action );
-get_action_type!( DeleteLink, get_delete_link_action );
-get_action_type!( OpenChain, get_open_chain_action );
-get_action_type!( CloseChain, get_close_chain_action );
-get_action_type!( Create, get_create_action );
-get_action_type!( Update, get_update_action );
-get_action_type!( Delete, get_delete_action );
+get_action_type!( Dna, summon_dna_action );
+get_action_type!( AgentValidationPkg, summon_agent_validation_pkg_action );
+get_action_type!( InitZomesComplete, summon_init_zomes_complete_action );
+get_action_type!( CreateLink, summon_create_link_action );
+get_action_type!( DeleteLink, summon_delete_link_action );
+get_action_type!( OpenChain, summon_open_chain_action );
+get_action_type!( CloseChain, summon_close_chain_action );
+get_action_type!( Create, summon_create_action );
+get_action_type!( Update, summon_update_action );
+get_action_type!( Delete, summon_delete_action );
 
 
 /// Get an action address that is expected to be a [`EntryCreationAction`]
-pub fn get_creation_action(action_addr: &ActionHash) -> ExternResult<EntryCreationAction> {
-    let create_record = must_get_valid_record( action_addr.to_owned() )?;
+pub fn summon_creation_action(action_addr: &ActionHash) -> ExternResult<EntryCreationAction> {
+    let create_record = summon_valid_record( action_addr.to_owned() )?;
     match create_record.signed_action.hashed.content {
         Action::Create(create) => Ok( create.into() ),
         Action::Update(update) => Ok( update.into() ),
@@ -395,19 +422,19 @@ pub trait ActionTransformer : Sized {
     /// }
     ///
     /// fn test(addr: ActionHash) -> ExternResult<()> {
-    ///     let action = must_get_action( addr )?.hashed.content;
-    ///     let entry_type = action.get_app_entry<EntryTypes>()?;
+    ///     let action = summon_action( addr )?.hashed.content;
+    ///     let entry_type = action.summon_app_entry<EntryTypes>()?;
     ///     Ok(())
     /// }
     /// ```
-    fn get_app_entry<ET>(&self) -> ExternResult<ET>
+    fn summon_app_entry<ET>(&self) -> ExternResult<ET>
     where
         ET: EntryTypesHelper,
         WasmError: From<<ET as EntryTypesHelper>::Error>;
 }
 
 impl ActionTransformer for Action {
-    fn get_app_entry<ET>(&self) -> ExternResult<ET>
+    fn summon_app_entry<ET>(&self) -> ExternResult<ET>
     where
         ET: EntryTypesHelper,
         WasmError: From<<ET as EntryTypesHelper>::Error>,
@@ -415,7 +442,7 @@ impl ActionTransformer for Action {
         let action = EntryCreationAction::try_from( self.to_owned() )
             .map_err(|err| guest_error!(err.0))?;
         let entry_def = detect_app_entry_def( &action )?;
-        let entry = must_get_entry( action.entry_hash().to_owned() )?.content;
+        let entry = summon_entry( action.entry_hash().to_owned() )?.content;
 
         ET::deserialize_from_type(
             entry_def.zome_index.clone(),

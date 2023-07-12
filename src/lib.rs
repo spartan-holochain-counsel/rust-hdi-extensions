@@ -1,5 +1,8 @@
 mod macros;
 
+pub use hdi;
+pub use holo_hash;
+
 use core::convert::{ TryFrom, TryInto };
 use hdi::prelude::{
     must_get_action,
@@ -17,7 +20,7 @@ use hdi::prelude::{
     CreateLink, DeleteLink, OpenChain, CloseChain,
     Create, Update, Delete,
 };
-use hdi::prelude::holo_hash::AnyLinkableHashPrimitive;
+use holo_hash::AnyLinkableHashPrimitive;
 
 
 // Prefix association train alternatives for 'must_'

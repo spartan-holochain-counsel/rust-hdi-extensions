@@ -43,14 +43,19 @@ use-npm-into-struct:
 #
 preview-crate:			test-debug
 	cargo publish --dry-run --allow-dirty
-publish-crate:			test-debug
-	CARGO_HOME=$(HOME)/.cargo cargo publish
+publish-crate:			test-debug .cargo/credentials
+	cargo publish
+.cargo/credentials:
+	cp ~/$@ $@
 
 
 
 #
 # Testing
 #
+reset:
+	rm -f tests/*.dna
+	rm -f tests/zomes/*.wasm
 tests/%.dna:			FORCE
 	cd tests; make $*.dna
 test-setup:			tests/node_modules

@@ -26,7 +26,7 @@ make test-debug
 ```
 
 - `make test-unit-debug` - **Rust tests only**
-- `make test-integration-debug` - **Rust tests only**
+- `make test-integration-debug` - **Integration tests only**
 
 
 > **NOTE:** remove `-debug` to run tests without logging

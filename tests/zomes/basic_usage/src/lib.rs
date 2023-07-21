@@ -1,3 +1,5 @@
+use hdi_extensions::hdi;
+
 use hdi::prelude::*;
 use hdk::prelude::debug;
 use hdi_extensions::{

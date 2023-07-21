@@ -11,6 +11,8 @@ Code that works in tandem or is complimentary to the [`hdi`](https://docs.rs/hdi
 
 ### Usage
 
+[Version table](./VERSIONS.md)
+
 See [https://docs.rs/whi_hdi_extensions](https://docs.rs/whi_hdi_extensions)
 
 

@@ -28,19 +28,21 @@ use holo_hash::AnyLinkableHashPrimitive;
 //
 // In the end, 'pure_get' or any other prefixes for 'get' seemed to long.  'summon' implies that the
 // thing is not present but it exists somewhere else.
+//
+// However, 'must_get' also means that it must get the record even if it is deleted.
 /// Alias for [`must_get_valid_record`]
-pub fn summon_valid_record(action_hash: ActionHash) -> ExternResult<Record> {
-    must_get_valid_record(action_hash)
+pub fn summon_valid_record(action_hash: &ActionHash) -> ExternResult<Record> {
+    must_get_valid_record(action_hash.to_owned())
 }
 
 /// Alias for [`must_get_action`]
-pub fn summon_action(action_hash: ActionHash) -> ExternResult<SignedActionHashed> {
-    must_get_action(action_hash)
+pub fn summon_action(action_hash: &ActionHash) -> ExternResult<SignedActionHashed> {
+    must_get_action(action_hash.to_owned())
 }
 
 /// Alias for [`must_get_entry`]
-pub fn summon_entry(entry_hash: EntryHash) -> ExternResult<EntryHashed> {
-    must_get_entry(entry_hash)
+pub fn summon_entry(entry_hash: &EntryHash) -> ExternResult<EntryHashed> {
+    must_get_entry(entry_hash.to_owned())
 }
 
 
@@ -68,7 +70,7 @@ pub fn trace_origin(action_address: &ActionHash) -> ExternResult<Vec<(ActionHash
     let mut next_addr = Some(action_address.to_owned());
 
     while let Some(addr) = next_addr {
-        let record = summon_valid_record( addr )?;
+        let record = summon_valid_record( &addr )?;
 
         next_addr = match record.action() {
             Action::Update(update) => Some(update.original_action_address.to_owned()),
@@ -311,11 +313,11 @@ where
 {
     match addr.to_owned().into_primitive() {
         AnyLinkableHashPrimitive::Action(action_hash) => Ok(
-            summon_valid_record( action_hash )?.try_into()
+            summon_valid_record( &action_hash )?.try_into()
                 .map_err(|error| convert_deserialize_error( WasmError::from(error) ) )?
         ),
         AnyLinkableHashPrimitive::Entry(entry_hash) => Ok(
-            summon_entry( entry_hash )?.content.try_into()
+            summon_entry( &entry_hash )?.content.try_into()
                 .map_err(|error| convert_deserialize_error( WasmError::from(error) ) )?
         ),
         AnyLinkableHashPrimitive::External(external_hash) => Err(guest_error!(
@@ -358,7 +360,7 @@ pub fn summon_record_type(
     action_addr: &ActionHash,
     action_type: &ActionType
 ) -> ExternResult<Record> {
-    let record = summon_valid_record( action_addr.to_owned() )?;
+    let record = summon_valid_record( action_addr )?;
 
     if record.action().action_type() != *action_type {
         Err(guest_error!(format!("Action address ({}) is not a {} record", action_addr, action_type )))?
@@ -395,7 +397,7 @@ get_action_type!( Delete, summon_delete_action );
 
 /// Get an action address that is expected to be a [`EntryCreationAction`]
 pub fn summon_creation_action(action_addr: &ActionHash) -> ExternResult<EntryCreationAction> {
-    let create_record = summon_valid_record( action_addr.to_owned() )?;
+    let create_record = summon_valid_record( action_addr )?;
     match create_record.signed_action.hashed.content {
         Action::Create(create) => Ok( create.into() ),
         Action::Update(update) => Ok( update.into() ),
@@ -425,7 +427,7 @@ pub trait ActionTransformer : Sized {
     /// }
     ///
     /// fn test(addr: ActionHash) -> ExternResult<()> {
-    ///     let action = summon_action( addr )?.hashed.content;
+    ///     let action = summon_action( &addr )?.hashed.content;
     ///     let entry_type = action.summon_app_entry<EntryTypes>()?;
     ///     Ok(())
     /// }
@@ -445,7 +447,7 @@ impl ActionTransformer for Action {
         let action = EntryCreationAction::try_from( self.to_owned() )
             .map_err(|err| guest_error!(err.0))?;
         let entry_def = detect_app_entry_def( &action )?;
-        let entry = summon_entry( action.entry_hash().to_owned() )?.content;
+        let entry = summon_entry( action.entry_hash() )?.content;
 
         ET::deserialize_from_type(
             entry_def.zome_index.clone(),

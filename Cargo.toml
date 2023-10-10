@@ -12,6 +12,6 @@ readme = "README.md"
 name = "hdi_extensions"
 
 [dependencies]
-hdi = "=0.3.2"
-holo_hash = { version = "=0.2.2", features = [ "encoding" ] }
+hdi = "0.3.2"
+holo_hash = { version = "0.2.2", features = [ "encoding" ] }
 serde = "1"

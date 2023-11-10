@@ -2530,7 +2530,7 @@ dependencies = [
 
 [[package]]
 name = "whi_hdi_extensions"
-version = "0.4.1"
+version = "0.4.2"
 dependencies = [
  "hdi",
  "holo_hash",

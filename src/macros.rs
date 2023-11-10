@@ -12,7 +12,7 @@
 #[macro_export]
 macro_rules! valid {
     () => {
-        return Ok(hdi::prelude::ValidateCallbackResult::Valid)
+        return Ok($crate::hdi::prelude::ValidateCallbackResult::Valid)
     };
 }
 
@@ -30,7 +30,7 @@ macro_rules! valid {
 #[macro_export]
 macro_rules! invalid {
     ( $message:expr ) => {
-        return Ok(hdi::prelude::ValidateCallbackResult::Invalid($message))
+        return Ok($crate::hdi::prelude::ValidateCallbackResult::Invalid($message))
     };
 }
 
@@ -46,8 +46,8 @@ macro_rules! invalid {
 macro_rules! guest_error {
     ( $message:expr ) => {
         {
-            use hdi::prelude::WasmError;
-            hdi::prelude::wasm_error!(hdi::prelude::WasmErrorInner::Guest( $message ))
+            use $crate::hdi::prelude::*;
+            wasm_error!(WasmErrorInner::Guest( $message ))
         }
     };
 }

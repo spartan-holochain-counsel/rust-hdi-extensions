@@ -1,4 +1,3 @@
-use hdi_extensions::hdi;
 
 use hdk::prelude::*;
 use hdi_extensions::{

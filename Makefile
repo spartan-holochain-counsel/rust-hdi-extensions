@@ -22,19 +22,12 @@ clean:
 	    .cargo \
 	    target
 
-use-local-backdrop:
-	cd tests; npm uninstall @whi/holochain-backdrop
-	cd tests; npm install --save-dev ../../node-holochain-backdrop/
-use-npm-backdrop:
-	cd tests; npm uninstall @whi/holochain-backdrop
-	cd tests; npm install --save-dev @whi/holochain-backdrop
-
 use-local-into-struct:
 	cd tests; npm uninstall @whi/into-struct
-	cd tests; npm install --save-dev ../../projects/js-into-struct/
+	cd tests; npm install --save ../../projects/js-into-struct/
 use-npm-into-struct:
 	cd tests; npm uninstall @whi/into-struct
-	cd tests; npm install --save-dev @whi/into-struct
+	cd tests; npm install --save @whi/into-struct
 
 
 

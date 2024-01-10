@@ -9,15 +9,14 @@
   "license": "ISC",
   "dependencies": {
     "@faker-js/faker": "^8.0.2",
-    "@whi/holo-hash": "^0.5.3",
-    "@whi/holochain-backdrop": "^2.2.1",
+    "@spartan-hc/app-interface-client": "file:../../app-interface-client-js",
+    "@spartan-hc/holo-hash": "^0.6.1",
+    "@spartan-hc/holochain-backdrop": "^3.0.0",
+    "@whi/into-struct": "^0.1.0",
     "@whi/json": "^0.1.6",
     "@whi/weblogger": "^0.1.6",
     "chai": "^4.3.7",
     "mocha": "^10.2.0",
     "why-is-node-running": "^2.2.2"
-  },
-  "devDependencies": {
-    "@whi/into-struct": "^0.1.0"
   }
 }

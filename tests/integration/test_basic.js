@@ -94,7 +94,7 @@ describe("HDI Extensions", function () {
 	    "logging": process.env.LOG_LEVEL || "fatal",
 	});
 	alice_app			= await client.app("test-alice");
-	
+
 	// Must call whoami on each cell to ensure that init has finished.
 	{
 	    let whoami			= await alice_app.call( DNA_NAME, MAIN_ZOME, "whoami", null, 300_000 );

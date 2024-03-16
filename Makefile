@@ -34,9 +34,9 @@ use-npm-into-struct:
 #
 # Packages
 #
-preview-crate:			test-debug
+preview-crate:			test
 	cargo publish --dry-run --allow-dirty
-publish-crate:			test-debug .cargo/credentials
+publish-crate:			test .cargo/credentials
 	make docs
 	cargo publish
 .cargo/credentials:
@@ -58,8 +58,10 @@ tests/%.dna:			FORCE
 	cd tests; make $*.dna
 test-setup:			tests/node_modules
 
-test:				test-unit test-integration
-test-debug:			test-unit test-integration-debug
+
+test:
+	make -s test-unit
+	make -s test-integration
 
 test-unit:
 	RUST_BACKTRACE=1 cargo test -- --nocapture

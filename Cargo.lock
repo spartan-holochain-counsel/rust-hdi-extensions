@@ -799,9 +799,9 @@ checksum = "290f1a1d9242c78d09ce40a5e87e7554ee637af1351968159f4952f028f75604"
 
 [[package]]
 name = "hdi"
-version = "0.4.0-beta-dev.29"
+version = "0.4.0-beta-dev.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c31dfc1fec80d7d9292e04e26e94528b0a0cc9baf982d1fb18e3af3e7625cb90"
+checksum = "e9b10e28b62f081933f7c176ec16a2924afb05c74b56197882cff3b7ca24f84c"
 dependencies = [
  "getrandom",
  "hdk_derive",
@@ -815,9 +815,9 @@ dependencies = [
 
 [[package]]
 name = "hdk_derive"
-version = "0.3.0-beta-dev.27"
+version = "0.3.0-beta-dev.28"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fcfd466d96f2d19530b1419646b0a52c3bc833b0e7dacad4329cb90708db8665"
+checksum = "0459e3e35a7b07477102c110d7d4fbe184b7ceb2e8212c43f04fcf58b268a1c0"
 dependencies = [
  "darling 0.14.4",
  "heck",
@@ -849,9 +849,9 @@ checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 
 [[package]]
 name = "holo_hash"
-version = "0.3.0-beta-dev.23"
+version = "0.3.0-beta-dev.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "050e53c0258e6235145fe949b74cedd48c24f4d92e1e7b7e39581a9a2b6996e7"
+checksum = "9830117eeb0163bec46835d876f4ae4e463fb1331071d76a3f4fc49f54991546"
 dependencies = [
  "base64",
  "blake2b_simd",
@@ -867,9 +867,9 @@ dependencies = [
 
 [[package]]
 name = "holochain_integrity_types"
-version = "0.3.0-beta-dev.27"
+version = "0.3.0-beta-dev.28"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3a76306ea0c825e6bc8f040df4a3fe1ab82f187c108a91e81df957ae4f76efda"
+checksum = "5d3e8650ee8b7d19e26bc769c0831a55e89acf54b480f122d7378b52f4a7a322"
 dependencies = [
  "holo_hash",
  "holochain_secure_primitive",
@@ -1065,9 +1065,9 @@ dependencies = [
 
 [[package]]
 name = "kitsune_p2p_dht_arc"
-version = "0.3.0-beta-dev.16"
+version = "0.3.0-beta-dev.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1aaba5f7fcb2c0b7faa3f859a3de5c4b893fbf9cfea51530549d11e9738fbfac"
+checksum = "d5128eb7823b352d0bc24038960c36717510d773e754476b45515d8eec4d1646"
 dependencies = [
  "derive_more",
  "gcollections",

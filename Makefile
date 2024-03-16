@@ -83,22 +83,23 @@ clean-files-all:	clean-remove-chaff
 clean-files-all-force:	clean-remove-chaff
 	git clean -fdx
 
-PRE_HDK_VERSION = "0.2.2"
-NEW_HDK_VERSION = "0.3.0-beta-dev.33"
+PRE_HDI_VERSION = "0.4.0-beta-dev.29"
+NEW_HDI_VERSION = "0.4.0-beta-dev.30"
 
-PRE_HDI_VERSION = "0.3.2"
-NEW_HDI_VERSION = "0.4.0-beta-dev.29"
+PRE_HDK_VERSION = "0.3.0-beta-dev.33"
+NEW_HDK_VERSION = "0.3.0-beta-dev.34"
 
-PRE_HH_VERSION = "0.2.2", features
-NEW_HH_VERSION = "0.3.0-beta-dev.23", features
+PRE_HH_VERSION = "0.3.0-beta-dev.23", features
+NEW_HH_VERSION = "0.3.0-beta-dev.24", features
 
 GG_REPLACE_LOCATIONS = ':(exclude)*.lock' tests/*_types tests/zomes/ *_types/ Cargo.toml
 
-update-hdk-version:
-	git grep -l '$(PRE_HH_VERSION)' -- $(GG_REPLACE_LOCATIONS) | xargs sed -i 's|$(PRE_HH_VERSION)|$(NEW_HH_VERSION)|g'
-	git grep -l $(PRE_HDK_VERSION) -- $(GG_REPLACE_LOCATIONS) | xargs sed -i 's/$(PRE_HDK_VERSION)/$(NEW_HDK_VERSION)/g'
 update-hdi-version:
-	git grep -l $(PRE_HDI_VERSION) -- $(GG_REPLACE_LOCATIONS) | xargs sed -i 's/$(PRE_HDI_VERSION)/$(NEW_HDI_VERSION)/g'
+	git grep -l '$(PRE_HDI_VERSION)' -- $(GG_REPLACE_LOCATIONS) | xargs sed -i 's/$(PRE_HDI_VERSION)/$(NEW_HDI_VERSION)/g'
+update-hdk-version:
+	git grep -l '$(PRE_HDK_VERSION)' -- $(GG_REPLACE_LOCATIONS) | xargs sed -i 's/$(PRE_HDK_VERSION)/$(NEW_HDK_VERSION)/g'
+update-holo-hash-version:
+	git grep -l '$(PRE_HH_VERSION)' -- $(GG_REPLACE_LOCATIONS) | xargs sed -i 's|$(PRE_HH_VERSION)|$(NEW_HH_VERSION)|g'
 
 
 

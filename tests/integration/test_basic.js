@@ -76,7 +76,7 @@ function error_tests () {
 describe("HDI Extensions", function () {
     const holochain			= new Holochain({
 	"timeout": 60_000,
-	"default_stdout_loggers": process.env.LOG_LEVEL === "trace",
+	"default_stdout_loggers": log._level > 3,
     });
 
     before(async function () {

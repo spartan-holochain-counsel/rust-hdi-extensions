@@ -47,6 +47,10 @@ publish-crate:			test-debug .cargo/credentials
 #
 # Testing
 #
+DEBUG_LEVEL	       ?= warn
+TEST_ENV_VARS		= RUST_LOG=none LOG_LEVEL=$(DEBUG_LEVEL)
+MOCHA_OPTS		= -n enable-source-maps
+
 reset:
 	rm -f tests/*.dna
 	rm -f tests/zomes/*.wasm
@@ -62,10 +66,9 @@ test-unit:
 
 MODEL_DNA			= tests/model_dna.dna
 
+
 test-integration:		test-setup $(MODEL_DNA)
-	cd tests; RUST_LOG=none LOG_LEVEL=fatal npx mocha integration/test_basic.js
-test-integration-debug:		test-setup $(MODEL_DNA)
-	cd tests; RUST_LOG=info LOG_LEVEL=trace npx mocha integration/test_basic.js
+	cd tests; $(TEST_ENV_VARS) npx mocha $(MOCHA_OPTS) integration/test_basic.js
 
 
 

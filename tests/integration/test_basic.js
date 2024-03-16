@@ -9,9 +9,11 @@ import { faker }			from '@faker-js/faker';
 import msgpack				from '@msgpack/msgpack';
 import json				from '@whi/json';
 import { AgentPubKey, HoloHash,
-	 ActionHash, EntryHash }	from '@whi/holo-hash';
-import HolochainBackdrop		from '@whi/holochain-backdrop';
-const { Holochain }			= HolochainBackdrop;
+	 ActionHash, EntryHash }	from '@spartan-hc/holo-hash';
+import { Holochain }			from '@spartan-hc/holochain-backdrop';
+import {
+    AppInterfaceClient,
+}					from '@spartan-hc/app-interface-client';
 import {
     intoStruct,
     OptionType, VecType, MapType,
@@ -38,15 +40,17 @@ const DNA_NAME				= "test_dna";
 const MAIN_ZOME				= "basic_usage_csr";
 
 
+let client;
+let alice_app;
 let p1, p1_addr;
 
 
 function basic_tests () {
 
     it("should create group via alice (A1)", async function () {
-	let input			= createPostInput( clients.alice.cellAgent() );
+	let input			= createPostInput( alice_app.agent_id );
 	p1_addr				= new ActionHash(
-	    await clients.alice.call( DNA_NAME, MAIN_ZOME, "create_post", input )
+	    await alice_app.call( DNA_NAME, MAIN_ZOME, "create_post", input )
 	);
 	log.debug("Post ID: %s", p1_addr );
 
@@ -54,7 +58,7 @@ function basic_tests () {
 	expect( p1_addr		).to.have.length( 39 );
 
 	p1				= intoStruct(
-	    await clients.alice.call( DNA_NAME, MAIN_ZOME, "get_post", {
+	    await alice_app.call( DNA_NAME, MAIN_ZOME, "get_post", {
 		"id": p1_addr,
 	    }),
 	    PostStruct
@@ -78,22 +82,22 @@ describe("HDI Extensions", function () {
     before(async function () {
 	this.timeout( 300_000 );
 
-	const actors			= await holochain.backdrop({
-	    "test_happ": {
+	await holochain.backdrop({
+	    "test": {
 		[DNA_NAME]:		TEST_DNA_PATH,
 	    },
 	});
 
-	for ( let name in actors ) {
-	    for ( let app_prefix in actors[ name ] ) {
-		log.info("Upgrade client for %s => %s", name, app_prefix );
-		const client		= clients[ name ]	= actors[ name ][ app_prefix ].client;
-	    }
-	}
+	const app_port			= await holochain.appPorts()[0];
+
+	client				= new AppInterfaceClient( app_port, {
+	    "logging": process.env.LOG_LEVEL || "fatal",
+	});
+	alice_app			= await client.app("test-alice");
 
 	// Must call whoami on each cell to ensure that init has finished.
 	{
-	    let whoami			= await clients.alice.call( DNA_NAME, MAIN_ZOME, "whoami", null, 300_000 );
+	    let whoami			= await alice_app.call( DNA_NAME, MAIN_ZOME, "whoami", null, 300_000 );
 	    log.normal("Alice whoami: %s", String(new HoloHash( whoami.agent_initial_pubkey )) );
 	}
     });

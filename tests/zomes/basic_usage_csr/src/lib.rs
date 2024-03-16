@@ -40,7 +40,7 @@ pub struct GetEntityInput {
 #[hdk_extern]
 pub fn get_post(input: GetEntityInput) -> ExternResult<PostEntry> {
     debug!("Get latest post entry: {:#?}", input.id );
-    let record = get( input.id.clone(), GetOptions::latest() )?
+    let record = get( input.id.clone(), GetOptions::network() )?
         .ok_or(guest_error!(format!("Record not found: {}", input.id )))?;
 
     Ok( PostEntry::try_from_record( &record )? )

@@ -76,19 +76,22 @@ function error_tests () {
 describe("HDI Extensions", function () {
     const holochain			= new Holochain({
 	"timeout": 60_000,
-	"default_stdout_loggers": log._level > 3,
+	"default_stdout_loggers": log.level_rank > 3,
     });
 
     before(async function () {
 	this.timeout( 300_000 );
 
-	await holochain.backdrop({
-	    "test": {
-		[DNA_NAME]:		TEST_DNA_PATH,
+	await holochain.install([
+	    "alice",
+	], {
+	    "app_name": "test",
+	    "bundle": {
+		[DNA_NAME]:	TEST_DNA_PATH,
 	    },
 	});
 
-	const app_port			= await holochain.appPorts()[0];
+	const app_port			= await holochain.ensureAppPort();
 
 	client				= new AppInterfaceClient( app_port, {
 	    "logging": process.env.LOG_LEVEL || "fatal",

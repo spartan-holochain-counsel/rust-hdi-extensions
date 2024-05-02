@@ -82,7 +82,7 @@ describe("HDI Extensions", function () {
     before(async function () {
 	this.timeout( 300_000 );
 
-	await holochain.install([
+	const installations		= await holochain.install([
 	    "alice",
 	], {
 	    "app_name": "test",
@@ -96,7 +96,9 @@ describe("HDI Extensions", function () {
 	client				= new AppInterfaceClient( app_port, {
 	    "logging": process.env.LOG_LEVEL || "fatal",
 	});
-	alice_app			= await client.app("test-alice");
+
+	const alice_auth		= installations.alice.test.auth.token;
+	alice_app			= await client.app( alice_auth );
 
 	// Must call whoami on each cell to ensure that init has finished.
 	{

@@ -22,12 +22,20 @@ clean:
 	    .cargo \
 	    target
 
-use-local-into-struct:
-	cd tests; npm uninstall @whi/into-struct
-	cd tests; npm install --save ../../projects/js-into-struct/
-use-npm-into-struct:
-	cd tests; npm uninstall @whi/into-struct
-	cd tests; npm install --save @whi/into-struct
+npm-reinstall-local:
+	cd tests; npm uninstall $(NPM_PACKAGE); npm i --save $(LOCAL_PATH)
+npm-reinstall-public:
+	cd tests; npm uninstall $(NPM_PACKAGE); npm i --save $(NPM_PACKAGE)
+
+npm-use-app-interface-client-public:
+npm-use-app-interface-client-local:
+npm-use-app-interface-client-%:
+	NPM_PACKAGE=@spartan-hc/app-interface-client LOCAL_PATH=../../app-interface-client-js make npm-reinstall-$*
+
+npm-use-backdrop-public:
+npm-use-backdrop-local:
+npm-use-backdrop-%:
+	NPM_PACKAGE=@spartan-hc/holochain-backdrop LOCAL_PATH=../../node-holochain-backdrop make npm-reinstall-$*
 
 
 

@@ -11,3 +11,4 @@
 | **v0.2.7-rc.1**        | 0.5.0           | 0.3.7-rc.0        | [holochain-0.2.7-rc.1](https://github.com/holochain/holochain/tree/holochain-0.2.7-rc.1)               |
 | **v0.3.0-beta-dev.40** | 0.6.0           | 0.4.0-beta-dev.30 | [holochain-0.3.0-beta-dev.40](https://github.com/holochain/holochain/tree/holochain-0.3.0-beta-dev.40) |
 | **v0.3.0-beta-dev.45** | 0.7.0           | 0.4.0-beta-dev.34 | [holochain-0.3.0-beta-dev.45](https://github.com/holochain/holochain/tree/holochain-0.3.0-beta-dev.45) |
+| **v0.3.0-beta-dev.48** | 0.8.0           | 0.4.0-beta-dev.36 | [holochain-0.3.0-beta-dev.48](https://github.com/holochain/holochain/tree/holochain-0.3.0-beta-dev.48) |

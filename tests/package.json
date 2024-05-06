@@ -9,7 +9,7 @@
   "license": "ISC",
   "dependencies": {
     "@faker-js/faker": "^8.0.2",
-    "@spartan-hc/app-interface-client": "file:../../app-interface-client-js",
+    "@spartan-hc/app-interface-client": "^0.7.0",
     "@spartan-hc/holo-hash": "^0.7.0",
     "@spartan-hc/holochain-backdrop": "^4.4.0",
     "@whi/into-struct": "^0.2.1",

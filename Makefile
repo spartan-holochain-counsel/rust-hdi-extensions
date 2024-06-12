@@ -42,9 +42,9 @@ npm-use-backdrop-%:
 #
 # Packages
 #
-preview-crate:			test
+preview-crate:
 	cargo publish --dry-run --allow-dirty
-publish-crate:			test .cargo/credentials
+publish-crate:			.cargo/credentials
 	make docs
 	cargo publish
 .cargo/credentials:

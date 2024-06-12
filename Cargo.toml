@@ -1,6 +1,6 @@
 [package]
 name = "whi_hdi_extensions"
-version = "0.9.0"
+version = "0.10.0-dev.0"
 authors = ["Matthew Brisebois <matthew@webheroes.ca>"]
 edition = "2018"
 license = "CAL-1.0"
@@ -12,6 +12,6 @@ readme = "README.md"
 name = "hdi_extensions"
 
 [dependencies]
-hdi = "0.5.0-dev.1"
-holo_hash = { version = "0.4.0-dev.1", features = ["encoding"] }
+hdi = "=0.5.0-dev.6"
+holo_hash = { version = "=0.4.0-dev.6", features = ["encoding"] }
 serde = "1"

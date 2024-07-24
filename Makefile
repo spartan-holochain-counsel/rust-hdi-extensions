@@ -96,14 +96,14 @@ clean-files-all:	clean-remove-chaff
 clean-files-all-force:	clean-remove-chaff
 	git clean -fdx
 
-PRE_HDI_VERSION = "0.4.0-beta-dev.36"
-NEW_HDI_VERSION = "0.5.0-dev.1"
+PRE_HDI_VERSION = hdi = "=0.5.0-dev.5"
+NEW_HDI_VERSION = hdi = "=0.5.0-dev.5"
 
-PRE_HDK_VERSION = "0.3.0-beta-dev.38"
-NEW_HDK_VERSION = "0.4.0-dev.1"
+PRE_HDK_VERSION = hdk = "=0.4.0-dev.5"
+NEW_HDK_VERSION = hdk = "=0.4.0-dev.6"
 
-PRE_HH_VERSION = "0.3.0-beta-dev.28", features
-NEW_HH_VERSION = "0.4.0-dev.1", features
+PRE_HH_VERSION = holo_hash = { version = "=0.4.0-dev.5"
+NEW_HH_VERSION = holo_hash = { version = "=0.4.0-dev.5"
 
 GG_REPLACE_LOCATIONS = ':(exclude)*.lock' tests/*_types tests/zomes/ *_types/ Cargo.toml
 

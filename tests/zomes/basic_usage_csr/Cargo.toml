@@ -1,7 +1,7 @@
 [package]
 name = "basic_usage_csr"
 version = "0.0.0"
-edition = "2018"
+edition = "2021"
 
 [lib]
 name = "basic_usage_csr"
@@ -9,7 +9,7 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 basic_usage = { path = "../basic_usage" }
-hdk = "=0.4.0-dev.6"
+hdk = "=0.4.0-dev.10"
 serde = "1"
 test_types = { path = "../../test_types" }
 whi_hdi_extensions = { path = "../../.." }

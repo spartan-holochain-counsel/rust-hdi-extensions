@@ -96,14 +96,17 @@ clean-files-all:	clean-remove-chaff
 clean-files-all-force:	clean-remove-chaff
 	git clean -fdx
 
-PRE_HDI_VERSION = hdi = "=0.5.0-dev.5"
-NEW_HDI_VERSION = hdi = "=0.5.0-dev.5"
+PRE_EDITION = edition = "2018"
+NEW_EDITION = edition = "2021"
 
-PRE_HDK_VERSION = hdk = "=0.4.0-dev.5"
-NEW_HDK_VERSION = hdk = "=0.4.0-dev.6"
+PRE_HDI_VERSION = hdi = "=0.5.0-dev.5"
+NEW_HDI_VERSION = hdi = "=0.5.0-dev.9"
+
+PRE_HDK_VERSION = hdk = "=0.4.0-dev.6"
+NEW_HDK_VERSION = hdk = "=0.4.0-dev.10"
 
 PRE_HH_VERSION = holo_hash = { version = "=0.4.0-dev.5"
-NEW_HH_VERSION = holo_hash = { version = "=0.4.0-dev.5"
+NEW_HH_VERSION = holo_hash = { version = "=0.4.0-dev.8"
 
 GG_REPLACE_LOCATIONS = ':(exclude)*.lock' tests/*_types tests/zomes/ *_types/ Cargo.toml
 
@@ -113,6 +116,8 @@ update-hdk-version:
 	git grep -l '$(PRE_HDK_VERSION)' -- $(GG_REPLACE_LOCATIONS) | xargs sed -i 's/$(PRE_HDK_VERSION)/$(NEW_HDK_VERSION)/g'
 update-holo-hash-version:
 	git grep -l '$(PRE_HH_VERSION)' -- $(GG_REPLACE_LOCATIONS) | xargs sed -i 's|$(PRE_HH_VERSION)|$(NEW_HH_VERSION)|g'
+update-edition:
+	git grep -l '$(PRE_EDITION)' -- $(GG_REPLACE_LOCATIONS) | xargs sed -i 's/$(PRE_EDITION)/$(NEW_EDITION)/g'
 
 
 

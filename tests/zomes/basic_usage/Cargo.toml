@@ -1,14 +1,14 @@
 [package]
 name = "basic_usage"
 version = "0.0.0"
-edition = "2018"
+edition = "2021"
 
 [lib]
 name = "basic_usage"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-hdk = "=0.4.0-dev.6"
+hdk = "=0.4.0-dev.10"
 serde = "1"
 test_types = {path = "../../test_types"}
 whi_hdi_extensions = { path = "../../.." }

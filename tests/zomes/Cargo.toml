@@ -3,3 +3,4 @@ members = [
   "basic_usage",
   "basic_usage_csr",
 ]
+resolver = "2"

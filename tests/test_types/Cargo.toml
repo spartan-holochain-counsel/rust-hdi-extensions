@@ -9,6 +9,6 @@ name = "test_types"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-hdi = "=0.5.0-dev.9"
+hdi = "=0.5.0-dev.10"
 serde = "1"
 rmpv = { version = "1", features = ["with-serde"] }

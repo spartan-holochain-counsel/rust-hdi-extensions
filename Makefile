@@ -102,8 +102,8 @@ NEW_EDITION = edition = "2021"
 PRE_HDI_VERSION = hdi = "=0.5.0-dev.9"
 NEW_HDI_VERSION = hdi = "=0.5.0-dev.10"
 
-PRE_HDK_VERSION = hdk = "=0.4.0-dev.10"
-NEW_HDK_VERSION = hdk = "=0.4.0-dev.11"
+PRE_HDK_VERSION = hdk = "=0.4.0-dev.11"
+NEW_HDK_VERSION = hdk = "=0.4.0-dev.12"
 
 PRE_HH_VERSION = holo_hash = { version = "=0.4.0-dev.8"
 NEW_HH_VERSION = holo_hash = { version = "=0.4.0-dev.9"

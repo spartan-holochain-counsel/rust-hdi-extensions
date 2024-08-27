@@ -15,3 +15,4 @@
 | **v0.4.0-dev.1**       | 0.9.0           | 0.5.0-dev.1       | [holochain-0.4.0-dev.1](https://github.com/holochain/holochain/tree/holochain-0.4.0-dev.1)             |
 | **v0.4.0-dev.15**      | 0.10.0          | 0.5.0-dev.10      | [holochain-0.4.0-dev.15](https://github.com/holochain/holochain/tree/holochain-0.4.0-dev.15)           |
 | **v0.4.0-dev.18**      | 0.11.0          | 0.5.0-dev.10      | [holochain-0.4.0-dev.18](https://github.com/holochain/holochain/tree/holochain-0.4.0-dev.18)           |
+| **v0.4.0-dev.20**      | 0.12.0          | 0.5.0-dev.12      | [holochain-0.4.0-dev.20](https://github.com/holochain/holochain/tree/holochain-0.4.0-dev.20)           |

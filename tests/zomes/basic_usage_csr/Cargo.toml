@@ -9,7 +9,7 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 basic_usage = { path = "../basic_usage" }
-hdk = "=0.4.0-dev.19"
+hdk = "=0.4.1"
 serde = "1"
 test_types = { path = "../../test_types" }
 whi_hdi_extensions = { path = "../../.." }

@@ -99,14 +99,14 @@ clean-files-all-force:	clean-remove-chaff
 PRE_EDITION = edition = "2018"
 NEW_EDITION = edition = "2021"
 
-PRE_HDI_VERSION = hdi = "=0.5.0-dev.12"
-NEW_HDI_VERSION = hdi = "=0.5.0-dev.17"
+PRE_HDI_VERSION = hdi = "=0.5.0-dev.17"
+NEW_HDI_VERSION = hdi = "=0.5.1"
 
-PRE_HDK_VERSION = hdk = "=0.4.0-dev.14"
-NEW_HDK_VERSION = hdk = "=0.4.0-dev.19"
+PRE_HDK_VERSION = hdk = "=0.4.0-dev.19"
+NEW_HDK_VERSION = hdk = "=0.4.1"
 
-PRE_HH_VERSION = holo_hash = { version = "=0.4.0-dev.11"
-NEW_HH_VERSION = holo_hash = { version = "=0.4.0-dev.13"
+PRE_HH_VERSION = holo_hash = { version = "=0.4.0-dev.13"
+NEW_HH_VERSION = holo_hash = { version = "=0.4.1"
 
 GG_REPLACE_LOCATIONS = ':(exclude)*.lock' tests/*_types tests/zomes/ *_types/ Cargo.toml
 

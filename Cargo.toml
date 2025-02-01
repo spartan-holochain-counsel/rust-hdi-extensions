@@ -1,6 +1,6 @@
 [package]
 name = "whi_hdi_extensions"
-version = "0.13.0"
+version = "0.14.0"
 authors = ["Matthew Brisebois <matthew@webheroes.ca>"]
 edition = "2021"
 license = "CAL-1.0"

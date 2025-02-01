@@ -25,6 +25,8 @@
               rustc
 
               nodejs_22
+            ] ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
+              libiconv  # for test-fuzz-macro on macOS x86_64
             ];
 
             shellHook = ''
